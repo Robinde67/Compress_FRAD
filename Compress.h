@@ -37,7 +37,7 @@ class Compress
 public:
 
 
-	Compress(char* url);
+	Compress(const char* url);
 	~Compress();
 
 

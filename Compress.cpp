@@ -3,13 +3,8 @@
 
 
 
-Compress::Compress(char* url)
+Compress::Compress(const char* url)
 {
-
-
-
-	
-
 	//
 	//unsigned char bild[24];
 	//
@@ -20,9 +15,7 @@ Compress::Compress(char* url)
 	//width = *(int*)&bild[18];
 	//height = *(int*)&bild[22];
 	//int row_padded = (width * 3 + 3) & (~3);
-
-
-
+	
 	FILE* file;
 	struct BMPHeader header;
 
