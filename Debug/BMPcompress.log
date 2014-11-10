@@ -1,0 +1,4 @@
+﻿Project file contains ToolsVersion="12.0". This toolset is unknown or missing. You may be able to resolve this by installing the appropriate .NET Framework for this toolset. Treating the project as if it had ToolsVersion="4.0".
+  main.cpp
+d:\users\faku0401\documents\github\compress_frad\compress\main.cpp(20): warning C4700: uninitialized local variable 'path' used
+  BMPcompress.vcxproj -> D:\Users\faku0401\Documents\GitHub\Compress_FRAD\Debug\BMPcompress.exe
