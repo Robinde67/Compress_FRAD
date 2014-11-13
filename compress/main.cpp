@@ -13,7 +13,7 @@
 #include <iostream>
 #include "Header.h"
 
-#define SIZE 196608
+#define SIZE 196662
 
 #pragma pack(push, 1)
 struct BMPHeader
@@ -47,19 +47,25 @@ int main()
 {
     FILE* file;
     struct BMPHeader header;
-    char buffer[SIZE], *pixels;
     
     file = fopen("/Users/robin/Documents/spelprogrammering/Compress_FRAD/compress/image.bmp", "rb");
-    fread(buffer, 1, SIZE, file);
+    fseek(file, 0, SEEK_END);
+    long size = ftell(file);
+    fseek(file, 0, 0);
+
+    char buffer[size], *pixels;
+    fread(buffer, 1, size, file);
     fclose(file);
     
     memcpy(&header, buffer, sizeof(struct BMPHeader));
     pixels = buffer + header.offset;
+    
     FILE* newfile;
     newfile = fopen("/Users/robin/Documents/spelprogrammering/Compress_FRAD/compress/image.FRAD", "wb");
     fwrite(&header, 1, sizeof(struct BMPHeader), newfile);
     struct pixelstack stack{1,pixels[0], pixels[1], pixels[2]};
-    for (int i=3; i < SIZE; i+=3)
+    
+    for (int i=3; i < size; i+=3)
     {
         if(pixels[i] != pixels[i-3] || pixels[i+1] != pixels[i-2] || pixels[i+2] != pixels[i-1])
         {
@@ -74,29 +80,53 @@ int main()
             stack.pixelnum++;
         }
     }
+    
     fwrite(&stack, 1, sizeof(struct pixelstack), newfile);
     fclose(newfile);
-    /*struct BMPHeader headerd;
-    void* stackd;
-    char* bufferd[sizeof(newfile)];
+    
+    struct BMPHeader headerd;
     
     FILE* decompfile;
     newfile = fopen("/Users/robin/Documents/spelprogrammering/Compress_FRAD/compress/image.FRAD", "rb");
-    
-    
+    fseek(newfile, 0, SEEK_END);
+    long newsize = ftell(file);
+    fseek(newfile, 0, SEEK_SET);
     decompfile = fopen("/Users/robin/Documents/spelprogrammering/Compress_FRAD/compress/imagedecomp.bmp", "wb");
     
     
     
-    fread(bufferd, 1, sizeof(newfile), newfile);
-    memcpy(&headerd, bufferd, sizeof(struct BMPHeader));
+    fread(&headerd, 1, sizeof(struct BMPHeader), newfile);
+    //memcpy(&headerd, bufferd, sizeof(struct BMPHeader));
     
-    stackd = bufferd + header.offset;*/
+    struct pixelstack stackd;
+    
+    fwrite(&headerd, 1, sizeof(struct BMPHeader),decompfile);
     
     
-    
-    
-    // vi hann inte längre
+    for (int i = headerd.offset; i < newsize; i += sizeof(struct pixelstack))
+    {
+        fread(&stackd, 1, sizeof(struct pixelstack), newfile);
+        char bufferd[stackd.pixelnum*3];
+        for (int j=0; j < stackd.pixelnum*3; j++)
+        {
+            switch(j%3)
+            {
+                case 0:
+                    bufferd[j] = stackd.R;
+                    break;
+                case 1:
+                    bufferd[j] = stackd.G;
+                    break;
+                case 2:
+                    bufferd[j] = stackd.B;
+                    break;
+                    
+            }
+        }
+        fwrite(&bufferd, 1, sizeof(bufferd), decompfile);
+    }
+    fclose(newfile);
+    fclose(decompfile);
     
     
     
